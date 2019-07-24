@@ -94,20 +94,20 @@
   };
 </script>
 
-  <meta name="description" content="Map框架     简介LinkedHashMap是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与HashMap的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。">
+  <meta name="description" content="Map框架     简介LinkedHashMap是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与HashMap的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。 与HashMap关系LinkedHashMap直接继承于HashMap,允许key和value为null，因为put键相同的值会">
 <meta name="keywords" content="Map,HashMap,LinkedHashMap,Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java集合LinkedHashMap详解">
 <meta property="og:url" content="http://yoursite.com/2019/07/24/Java集合LinkedHashMap详解/index.html">
 <meta property="og:site_name" content="zzqcst">
-<meta property="og:description" content="Map框架     简介LinkedHashMap是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与HashMap的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。">
+<meta property="og:description" content="Map框架     简介LinkedHashMap是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与HashMap的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。 与HashMap关系LinkedHashMap直接继承于HashMap,允许key和value为null，因为put键相同的值会">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/images/pasted-1.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-2.png">
-<meta property="og:updated_time" content="2019-07-24T17:13:17.402Z">
+<meta property="og:updated_time" content="2019-07-24T17:14:35.121Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java集合LinkedHashMap详解">
-<meta name="twitter:description" content="Map框架     简介LinkedHashMap是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与HashMap的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。">
+<meta name="twitter:description" content="Map框架     简介LinkedHashMap是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与HashMap的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。 与HashMap关系LinkedHashMap直接继承于HashMap,允许key和value为null，因为put键相同的值会">
 <meta name="twitter:image" content="http://yoursite.com/images/pasted-1.png">
 
 
@@ -376,7 +376,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-25 01:13:17" itemprop="dateModified" datetime="2019-07-25T01:13:17+08:00">2019-07-25</time>
+                <time title="修改时间：2019-07-25 01:14:35" itemprop="dateModified" datetime="2019-07-25T01:14:35+08:00">2019-07-25</time>
               </span>
             
           
@@ -436,8 +436,6 @@
 </div>
 
 <h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p><code>LinkedHashMap</code>是实现了Map接口的哈希表和链表，具有可预测的迭代顺序。与<code>HashMap</code>的不同之处在于，它维护一个所有条目的双向链表。这个链表定义了迭代顺序，通常是键插入的顺序。注意，如果一个键被重新插入到映射中，插入顺序不会受到影响。</p>
-<a id="more"></a>
-
 <h4 id="与HashMap关系"><a href="#与HashMap关系" class="headerlink" title="与HashMap关系"></a>与HashMap关系</h4><p><code>LinkedHashMap</code>直接继承于<code>HashMap</code>,允许<code>key</code>和<code>value</code>为<code>null</code>，因为put键相同的值会覆盖之前的值，所以只会存在一个<code>key</code>为<code>null</code>。一些主要的方法和属性也直接继承自<code>HashMap</code>，并对其中某些方法进行了重写。<code>LinkedHashMap</code>可以按照插入序 (<code>insertion-order</code>)或访问序 (<code>access-order</code>)来对哈希表中的元素进行遍历。默认是按插入顺序排序，如果指定按访问顺序排序，那么调用<code>get</code>方法后，会将这次访问的元素移至链表尾部。</p>
 <h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><p><code>LinkedHashMap</code>改写了<code>HashMap</code>中的节点类<code>Node</code>，增加了<code>before</code>和<code>after</code>节点来实现双向链表。注意与<code>next</code>节点的区别，<code>next</code>是桶中的节点的下一个节点，而<code>before</code>和<code>after</code>是按插入顺序的上一个节点和下一个节点。（在1.7中使用的是环形双向链表）。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">HashMap</span>.<span class="title">Node</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    Entry&lt;K,V&gt; before, after;</span><br><span class="line">    Entry(<span class="keyword">int</span> hash, K key, V value, Node&lt;K,V&gt; next) &#123;</span><br><span class="line">        <span class="keyword">super</span>(hash, key, value, next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
