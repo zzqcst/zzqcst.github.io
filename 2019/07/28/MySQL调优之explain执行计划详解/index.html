@@ -95,6 +95,7 @@
 </script>
 
   <meta name="description" content="介绍explain显示了mysql如何使用索引来处理select语句以及连接表。可以帮助选择更好的索引和写出更优化的查询语句。 使用方法，在select语句前加上explain就可以了(MySQL 5.6开始，不仅仅支持select )  各列含义详解id标识select，id列数字越大越先执行，如果说数字一样大，那么就从上往下依次执行，id列为null的就表是这是一个结果集，不需要使用它来进行查">
+<meta name="keywords" content="MySQL">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL调优之explain执行计划详解">
 <meta property="og:url" content="http://yoursite.com/2019/07/28/MySQL调优之explain执行计划详解/index.html">
@@ -109,7 +110,7 @@
 <meta property="og:image" content="http://yoursite.com/images/pasted-24.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-20.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-21.png">
-<meta property="og:updated_time" content="2019-07-28T13:27:36.815Z">
+<meta property="og:updated_time" content="2019-07-28T13:52:48.338Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL调优之explain执行计划详解">
 <meta name="twitter:description" content="介绍explain显示了mysql如何使用索引来处理select语句以及连接表。可以帮助选择更好的索引和写出更优化的查询语句。 使用方法，在select语句前加上explain就可以了(MySQL 5.6开始，不仅仅支持select )  各列含义详解id标识select，id列数字越大越先执行，如果说数字一样大，那么就从上往下依次执行，id列为null的就表是这是一个结果集，不需要使用它来进行查">
@@ -366,7 +367,7 @@
                 
               
 
-              <time title="创建时间：2019-07-28 01:22:27 / 修改时间：21:27:36" itemprop="dateCreated datePublished" datetime="2019-07-28T01:22:27+08:00">2019-07-28</time>
+              <time title="创建时间：2019-07-28 01:22:00 / 修改时间：21:52:48" itemprop="dateCreated datePublished" datetime="2019-07-28T01:22:00+08:00">2019-07-28</time>
             </span>
           
 
@@ -376,6 +377,21 @@
             
           
 
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -539,6 +555,15 @@
 
     <footer class="post-footer">
       
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+          
+        </div>
+      
 
       
       
@@ -645,7 +670,9 @@
         
           
         
-        <span class="site-state-item-count">1</span>
+          
+        
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -670,7 +697,9 @@
         
           
         
-        <span class="site-state-item-count">4</span>
+          
+        
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
