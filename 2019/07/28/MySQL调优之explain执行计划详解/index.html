@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="介绍explain显示了mysql如何使用索引来处理select语句以及连接表。可以帮助选择更好的索引和写出更优化的查询语句。 使用方法，在select语句前加上explain就可以了(MySQL 5.6开始，不仅仅支持select )  各列含义详解id标识select，id列数字越大越先执行，如果说数字一样大，那么就从上往下依次执行，id列为null的就表是这是一个结果集，不需要使用它来进行查">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL调优之explain执行计划详解">
+<meta property="og:url" content="http://yoursite.com/2019/07/28/MySQL调优之explain执行计划详解/index.html">
+<meta property="og:site_name" content="zzqcst">
+<meta property="og:description" content="介绍explain显示了mysql如何使用索引来处理select语句以及连接表。可以帮助选择更好的索引和写出更优化的查询语句。 使用方法，在select语句前加上explain就可以了(MySQL 5.6开始，不仅仅支持select )  各列含义详解id标识select，id列数字越大越先执行，如果说数字一样大，那么就从上往下依次执行，id列为null的就表是这是一个结果集，不需要使用它来进行查">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/pasted-14.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-17.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-18.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-19.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-23.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-24.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-20.png">
+<meta property="og:image" content="http://yoursite.com/images/pasted-21.png">
+<meta property="og:updated_time" content="2019-07-28T13:27:36.815Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL调优之explain执行计划详解">
+<meta name="twitter:description" content="介绍explain显示了mysql如何使用索引来处理select语句以及连接表。可以帮助选择更好的索引和写出更优化的查询语句。 使用方法，在select语句前加上explain就可以了(MySQL 5.6开始，不仅仅支持select )  各列含义详解id标识select，id列数字越大越先执行，如果说数字一样大，那么就从上往下依次执行，id列为null的就表是这是一个结果集，不需要使用它来进行查">
+<meta name="twitter:image" content="http://yoursite.com/images/pasted-14.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/28/MySQL调优之explain执行计划详解/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>MySQL调优之explain执行计划详解 | zzqcst</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zzqcst</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/28/MySQL调优之explain执行计划详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhi">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zzqcst">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL调优之explain执行计划详解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-28 01:22:27 / 修改时间：21:27:36" itemprop="dateCreated datePublished" datetime="2019-07-28T01:22:27+08:00">2019-07-28</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>explain显示了mysql如何使用索引来处理select语句以及连接表。可以帮助选择更好的索引和写出更优化的查询语句。</p>
+<p>使用方法，在select语句前加上explain就可以了(MySQL 5.6开始，不仅仅支持select )</p>
+<p><img src="/images/pasted-14.png" alt></p>
+<h4 id="各列含义详解"><a href="#各列含义详解" class="headerlink" title="各列含义详解"></a>各列含义详解</h4><h5 id="id"><a href="#id" class="headerlink" title="id"></a>id</h5><p>标识select，id列数字越大越先执行，如果说数字一样大，那么就从上往下依次执行，id列为null的就表是这是一个结果集，不需要使用它来进行查询。</p>
+<h5 id="select-type"><a href="#select-type" class="headerlink" title="select_type"></a>select_type</h5><p>用来表示查询的类型，主要是用于区别普通查询、联合查询、子查询等的复杂查询。</p>
+<p>常用的值：</p>
+<ul>
+<li><code>SIMPLE</code>:简单 SELECT (不使用 UNION 或子查询)</li>
+<li><code>PRIMARY</code>:最外面的 SELECT</li>
+<li><code>UNION</code>:UNION 中的第二个和随后的 SELECT 语句</li>
+<li><code>DEPENDENT UNION</code>: UNION 中的第二个或后面的 SELECT 语句,取决于外面的查询</li>
+<li><code>UNION RESULT</code>: UNION 的结果</li>
+<li><code>SUBQUERY</code>:子查询中的第一个 SELECT</li>
+<li><code>DEPENDENT SUBQUERY</code>:子查询中的第一个 SELECT ,取决于外面的查询</li>
+<li><code>DERIVED</code>:导出表(派生表)的 SELECT ( FROM 子句的子查询)</li>
+<li><code>UNCACHEABLE SUBQUERY</code>：子查询中的第一个 select 语句，同时意味着 select 中的某些特性阻止结果被缓存于一个 Item_cache 中</li>
+<li><code>UNCACHEABLE UNION</code>：满足此查询是 UNION 中的第二个或者随后的查询，同时意味着 select 中的某些特性阻止结果被缓存于一个 Item_cache 中</li>
+</ul>
+<p>例：简单子查询</p>
+<p><img src="/images/pasted-17.png" alt="upload successful"></p>
+<p>from 子句中的子查询</p>
+<p><img src="/images/pasted-18.png" alt="upload successful"></p>
+<p>UNION 查询</p>
+<p><img src="/images/pasted-19.png" alt="upload successful"></p>
+<h5 id="table"><a href="#table" class="headerlink" title="table"></a>table</h5><ol>
+<li>输出的行所引用的表</li>
+<li>显示的查询表名，如果查询使用了别名，那么这里显示的是别名，如果不涉及对数据表的操作，那么这显示为 null，如果显示为尖括号括起来的 &lt;derived N&gt;就表示这个是临时表，后边的N就是执行计划中的id，表示结果来自于这个查询产生。如果是尖括号括起来的&lt;union M,N&gt;，与 &lt;derived N&gt;类似，也是一个临时表，表示这个结果来自于union查询的id为M,N的结果集。</li>
+</ol>
+<h5 id="type"><a href="#type" class="headerlink" title="type"></a>type</h5><ul>
+<li>依次从好到差：<code>system</code> &gt; <code>const</code> &gt; <code>eq_ref</code> &gt; <code>ref</code> &gt; <code>fulltext</code> &gt; <code>ref_or_null</code> &gt; <code>unique_subquery</code> &gt; <code>index_subquery</code> &gt; <code>range</code> &gt; <code>index_merge</code> &gt; <code>index</code> &gt; <code>ALL</code></li>
+<li>除了all之外，其他的type都可以使用到索引，除了index_merge之外，其他的type只可以用到一个索引</li>
+<li>最常用的从好到差依次是：<code>system</code> &gt; <code>const</code> &gt; <code>eq_ref</code> &gt; <code>ref</code> &gt; <code>range</code> &gt; <code>index</code> &gt; <code>all</code></li>
+<li>一般来说，得保证查询至少达到<code>range</code>级别，最好能达到<code>ref</code>。</li>
+<li><code>system</code> ：表只有一行记录（等于系统表），这是const类型的特例，平时不会出现，这个也可以忽略不计</li>
+<li><code>const</code> ：表示通过索引一次就找到了，const用于比较primary key 或者unique索引。因为只匹配一行数据，所以很快。如将主键置于where列表中，MySQL就能将该查询转换为一个常量。 </li>
+<li><code>eq_ref</code> ：唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描。使用这种索引，MySQL知道最多只返回一条符合条件的记录。</li>
+<li><code>ref</code> ：它是一种索引访问（有时也叫做索引查找），它返回所有匹配某个单独值的行，然而，它可能会找到多个符合条件的行，所以他应该属于查找和扫描的混合体。把它叫做ref是因为索引要跟某个参考值相比较。此类索引访问只有当使用非唯一性索引或者唯一索引的非唯一性前缀时才会发生。</li>
+<li><code>range</code> ：范围扫描就是一个有限制的索引扫描，key列显示使用了哪个索引，一般就是在你的where语句中出现between、&lt; 、&gt;、in等的查询，这种范围扫描索引比全表扫描要好，因为它只需要开始于索引的某一点，而结束于另一点，不用扫描全部索引。</li>
+<li><code>index</code> ：这个跟全表扫描一样，只是MySQL扫描表时按索引次序进行而不是行。它的主要优点是避免了排序；最大优点是要承担按索引次序读取整个表的开销。如果在EXTRA列中看到using index,说明MySQL正在使用覆盖索引，它比按索引次序全表扫描的开销要少的多。</li>
+<li><code>all</code> ：全表扫描，将遍历全表以找到匹配的行</li>
+</ul>
+<h5 id="possible-keys"><a href="#possible-keys" class="headerlink" title="possible_keys"></a>possible_keys</h5><p>查询可能使用到的索引都会在这里列出来</p>
+<h5 id="key"><a href="#key" class="headerlink" title="key"></a>key</h5><p>查询真正使用到的索引，select_type为index_merge时，这里可能出现两个以上的索引，其他的select_type这里只会出现一个。</p>
+<h5 id="key-len"><a href="#key-len" class="headerlink" title="key_len"></a>key_len</h5><p>用于处理查询的索引长度，单位为字节，如果是单列索引，那就整个索引长度算进去，如果是多列索引，那么查询不一定都能使用到所有的列，具体使用到了多少个列的索引，这里就会计算进去，没有使用到的列，这里不会计算进去。留意下这个列的值，算一下你的多列索引总长度就知道有没有使用到所有的列了。要注意，mysql的ICP特性使用到的索引不会计入其中。另外，key_len只计算where条件用到的索引长度，而排序和分组就算用到了索引，也不会计算到key_len中。</p>
+<p>例：</p>
+<p><img src="/images/pasted-23.png" alt="upload successful"></p>
+<p>主键(actor_id,film_id)是两个SMALLINT列，每个SMALLINT是2字节，那么索引中的每项是4个字节，key_len中显示使用的索引长度为2,可以推断出只使用了actor_id列，来执行索引查找。</p>
+<p><img src="/images/pasted-24.png" alt="upload successful"><br>这个查询中key_len为13个字节，即为a列和b列的总长度，a列是三个字符，utf8下每个字符最多3个字节，b列是一个4字节整型。</p>
+<h5 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h5><p>显示使用哪个列或常数与key一起从表中选择行。</p>
+<h5 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h5><p>这里是执行计划中估算的扫描行数，不是精确值</p>
+<h5 id="extra"><a href="#extra" class="headerlink" title="extra"></a>extra</h5><ol>
+<li><p><code>Using filesort</code>（九死一生）：</p>
+<ul>
+<li>说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行读取。MySQL中无法利用索引完成的排序操作称为“文件排序”。</li>
+</ul>
+</li>
+<li><p><code>Using temporary</code>（十死无生）：</p>
+<ul>
+<li>使用了用临时表保存中间结果，MySQL在对查询结果排序时使用临时表。常见于排序order by和分组查询group by。 </li>
+</ul>
+</li>
+<li><p><code>Using index</code>（发财了）：</p>
+<ul>
+<li>表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </li>
+</ul>
+</li>
+<li><p><code>Using where</code> ：</p>
+<ul>
+<li>表明使用了where过滤</li>
+</ul>
+</li>
+<li><p><code>Using join buffer</code> ：</p>
+<ul>
+<li>表明使用了连接缓存,比如说在查询的时候，多表join的次数非常多，那么将配置文件中的缓冲区的join buffer调大一些。</li>
+</ul>
+</li>
+<li><p><code>impossible where</code> ：</p>
+<ul>
+<li>where子句的值总是false，不能用来获取任何元组</li>
+</ul>
+</li>
+<li><p><code>select tables optimized away</code> ：</p>
+<ul>
+<li>在没有GROUPBY子句的情况下，基于索引优化MIN/MAX操作或者对于MyISAM存储引擎优化COUNT(*)操作，不必等到执行阶段再进行计算，查询执行计划生成的阶段即完成优化。</li>
+</ul>
+</li>
+<li><p><code>distinct</code> ：</p>
+<ul>
+<li>优化distinct操作，在找到第一匹配的元组后即停止找同样值的动作</li>
+</ul>
+</li>
+</ol>
+<h4 id="一个复杂-SELECT-类型的例子"><a href="#一个复杂-SELECT-类型的例子" class="headerlink" title="一个复杂 SELECT 类型的例子"></a>一个复杂 SELECT 类型的例子</h4><p><img src="/images/pasted-20.png" alt="upload successful"></p>
+<p>explain 结果：<br><img src="/images/pasted-21.png" alt="upload successful"></p>
+<ul>
+<li>结果集中第1行使用了 from 子查询的临时表 der_1，这个子查询被标记为&lt;derived3&gt;。</li>
+<li>第 2 行id为 3，因为它是查询中第3个select的一部分，归为DERIVED的原因是它嵌套在from子句中。</li>
+<li>第 3 行id为 2，它排在id为3的后面，因为它比 id 为 3 的 select 后执行，它依赖于id为3的查询，所以被归为DEPENDENT SUBQUERY。</li>
+<li>第 4 行 id 为4，被归为UNION，意味着它是UNION中第2个或之后的select，它的表为&lt;derived6&gt;,说明它使用的是从from子查询中的临时表。</li>
+<li>第 5 行的 id 为 6，是 from 中的子查询，类型为 DERIVED。</li>
+<li>第 6 行 id 为 7，是&lt;derived6&gt;的select列表中的一个普通子查询。</li>
+<li>第 7 行 id 为5，因为有用户变量，它被列为UNCACHEABLE SUBQUERY</li>
+<li>最后一行是 UNION RESULT。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/27/InnoDB存储引擎索引/" rel="next" title="InnoDB存储引擎索引">
+                <i class="fa fa-chevron-left"></i> InnoDB存储引擎索引
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">zhi</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#各列含义详解"><span class="nav-number">2.</span> <span class="nav-text">各列含义详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#id"><span class="nav-number">2.1.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#select-type"><span class="nav-number">2.2.</span> <span class="nav-text">select_type</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#table"><span class="nav-number">2.3.</span> <span class="nav-text">table</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#type"><span class="nav-number">2.4.</span> <span class="nav-text">type</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#possible-keys"><span class="nav-number">2.5.</span> <span class="nav-text">possible_keys</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#key"><span class="nav-number">2.6.</span> <span class="nav-text">key</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#key-len"><span class="nav-number">2.7.</span> <span class="nav-text">key_len</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ref"><span class="nav-number">2.8.</span> <span class="nav-text">ref</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#rows"><span class="nav-number">2.9.</span> <span class="nav-text">rows</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#extra"><span class="nav-number">2.10.</span> <span class="nav-text">extra</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个复杂-SELECT-类型的例子"><span class="nav-number">3.</span> <span class="nav-text">一个复杂 SELECT 类型的例子</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhi</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
