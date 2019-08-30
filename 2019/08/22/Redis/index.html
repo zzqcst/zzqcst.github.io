@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.2.0',
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="数据类型字符串set1SET key value [expiration EX seconds|PX milliseconds] [NX|XX]   EX 过期时间，单位为秒。可以用setex命令代替 PX 过期时间，单位为毫秒。可以用psetex命令代替 NX 只有键不存在时，才设置值。可以用setnx命令代替 XX 只有键存在时，才设置值。  例： 12345redis&amp;gt; SET myk">
+<meta name="keywords" content="Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis">
+<meta property="og:url" content="http://yoursite.com/2019/08/22/Redis/index.html">
+<meta property="og:site_name" content="zzqcst">
+<meta property="og:description" content="数据类型字符串set1SET key value [expiration EX seconds|PX milliseconds] [NX|XX]   EX 过期时间，单位为秒。可以用setex命令代替 PX 过期时间，单位为毫秒。可以用psetex命令代替 NX 只有键不存在时，才设置值。可以用setnx命令代替 XX 只有键存在时，才设置值。  例： 12345redis&amp;gt; SET myk">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-22T13:41:35.693Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis">
+<meta name="twitter:description" content="数据类型字符串set1SET key value [expiration EX seconds|PX milliseconds] [NX|XX]   EX 过期时间，单位为秒。可以用setex命令代替 PX 过期时间，单位为毫秒。可以用psetex命令代替 NX 只有键不存在时，才设置值。可以用setnx命令代替 XX 只有键存在时，才设置值。  例： 12345redis&amp;gt; SET myk">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/08/22/Redis/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>Redis | zzqcst</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zzqcst</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/22/Redis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhi">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zzqcst">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-22 17:21:00 / 修改时间：21:41:35" itemprop="dateCreated datePublished" datetime="2019-08-22T17:21:00+08:00">2019-08-22</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><h4 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h4><h5 id="set"><a href="#set" class="headerlink" title="set"></a>set</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value [expiration EX seconds|PX milliseconds] [NX|XX]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>EX 过期时间，单位为秒。可以用setex命令代替</li>
+<li>PX 过期时间，单位为毫秒。可以用psetex命令代替</li>
+<li>NX 只有键不存在时，才设置值。可以用setnx命令代替</li>
+<li>XX 只有键存在时，才设置值。</li>
+</ul>
+<p>例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SET mykey &quot;Hello&quot;</span><br><span class="line">&quot;OK&quot;</span><br><span class="line">redis&gt; GET mykey</span><br><span class="line">&quot;Hello&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="setrange"><a href="#setrange" class="headerlink" title="setrange"></a>setrange</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETRANGE key offset value</span><br></pre></td></tr></table></figure>
+
+<p>从指定的偏移处开始，用value覆盖存储在key处的字符串的一部分。返回值是修改后字符串长度。例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SET key1 &quot;Hello World&quot;</span><br><span class="line">&quot;OK&quot;</span><br><span class="line">redis&gt; SETRANGE key1 6 &quot;Redis&quot;</span><br><span class="line">(integer) 11</span><br><span class="line">redis&gt; GET key1</span><br><span class="line">&quot;Hello Redis&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<p>长度不够偏移量则0比特填充：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(integer) 11</span><br><span class="line">redis&gt; GET key2</span><br><span class="line">&quot;\u0000\u0000\u0000\u0000\u0000\u0000Redis&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="strlen"><a href="#strlen" class="headerlink" title="strlen"></a>strlen</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strlen key</span><br></pre></td></tr></table></figure>
+
+<p>返回key处存储的字符串值的长度。</p>
+<h5 id="mset"><a href="#mset" class="headerlink" title="mset"></a>mset</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSET key value [key value ...]</span><br></pre></td></tr></table></figure>
+
+<p>原子性操作，同时设置多个键值,例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; MSET key1 &quot;Hello&quot; key2 &quot;World&quot;</span><br><span class="line">&quot;OK&quot;</span><br><span class="line">redis&gt; GET key1</span><br><span class="line">&quot;Hello&quot;</span><br><span class="line">redis&gt; GET key2</span><br><span class="line">&quot;World&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="msetnx"><a href="#msetnx" class="headerlink" title="msetnx"></a>msetnx</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSETNX key value [key value ...]</span><br></pre></td></tr></table></figure>
+
+<p>key已存在时不设置。例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; MSETNX key1 &quot;Hello&quot; key2 &quot;there&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; MSETNX key2 &quot;there&quot; key3 &quot;world&quot;</span><br><span class="line">(integer) 0</span><br><span class="line">redis&gt; MGET key1 key2 key3</span><br><span class="line">1) &quot;Hello&quot;</span><br><span class="line">2) &quot;there&quot;</span><br><span class="line">3) (nil)</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="incr"><a href="#incr" class="headerlink" title="incr"></a>incr</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INCR key</span><br></pre></td></tr></table></figure>
+
+<p>整数型的值加1，key不存在则初值为0再加1。例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SET mykey &quot;10&quot;</span><br><span class="line">&quot;OK&quot;</span><br><span class="line">redis&gt; INCR mykey</span><br><span class="line">(integer) 11</span><br><span class="line">redis&gt; GET mykey</span><br><span class="line">&quot;11&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="decr"><a href="#decr" class="headerlink" title="decr"></a>decr</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">decr key</span><br></pre></td></tr></table></figure>
+
+<p>与incr相反。</p>
+<h5 id="decrby"><a href="#decrby" class="headerlink" title="decrby"></a>decrby</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">decrby key decrement</span><br></pre></td></tr></table></figure>
+
+<h5 id="incrby"><a href="#incrby" class="headerlink" title="incrby"></a>incrby</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incrby key increment</span><br></pre></td></tr></table></figure>
+
+<h5 id="getset"><a href="#getset" class="headerlink" title="getset"></a>getset</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getset key value</span><br></pre></td></tr></table></figure>
+
+<p>设置新值并返回旧值。</p>
+<h5 id="append"><a href="#append" class="headerlink" title="append"></a>append</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">append key value</span><br></pre></td></tr></table></figure>
+
+<h4 id="哈希"><a href="#哈希" class="headerlink" title="哈希"></a>哈希</h4><h5 id="hset"><a href="#hset" class="headerlink" title="hset"></a>hset</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HSET key field value</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; HSET myhash field1 &quot;Hello&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; HGET myhash field1</span><br><span class="line">&quot;Hello&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="hget"><a href="#hget" class="headerlink" title="hget"></a>hget</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HGET key field</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; HSET myhash field1 &quot;foo&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; HGET myhash field1</span><br><span class="line">&quot;foo&quot;</span><br><span class="line">redis&gt; HGET myhash field2</span><br><span class="line">(nil)</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="hgetall"><a href="#hgetall" class="headerlink" title="hgetall"></a>hgetall</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HGETALL key</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; HSET myhash field1 &quot;Hello&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; HSET myhash field2 &quot;World&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; HGETALL myhash</span><br><span class="line">1) &quot;field1&quot;</span><br><span class="line">2) &quot;Hello&quot;</span><br><span class="line">3) &quot;field2&quot;</span><br><span class="line">4) &quot;World&quot;</span><br><span class="line">redis&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4><h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><h4 id="有序集合"><a href="#有序集合" class="headerlink" title="有序集合"></a>有序集合</h4>
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/19/操作系统/" rel="next" title="操作系统">
+                <i class="fa fa-chevron-left"></i> 操作系统
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">zhi</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-number">1.</span> <span class="nav-text">数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串"><span class="nav-number">1.1.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#set"><span class="nav-number">1.1.1.</span> <span class="nav-text">set</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#setrange"><span class="nav-number">1.1.2.</span> <span class="nav-text">setrange</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#strlen"><span class="nav-number">1.1.3.</span> <span class="nav-text">strlen</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mset"><span class="nav-number">1.1.4.</span> <span class="nav-text">mset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#msetnx"><span class="nav-number">1.1.5.</span> <span class="nav-text">msetnx</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#incr"><span class="nav-number">1.1.6.</span> <span class="nav-text">incr</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#decr"><span class="nav-number">1.1.7.</span> <span class="nav-text">decr</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#decrby"><span class="nav-number">1.1.8.</span> <span class="nav-text">decrby</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#incrby"><span class="nav-number">1.1.9.</span> <span class="nav-text">incrby</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getset"><span class="nav-number">1.1.10.</span> <span class="nav-text">getset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#append"><span class="nav-number">1.1.11.</span> <span class="nav-text">append</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哈希"><span class="nav-number">1.2.</span> <span class="nav-text">哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#hset"><span class="nav-number">1.2.1.</span> <span class="nav-text">hset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#hget"><span class="nav-number">1.2.2.</span> <span class="nav-text">hget</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#hgetall"><span class="nav-number">1.2.3.</span> <span class="nav-text">hgetall</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#列表"><span class="nav-number">1.3.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#集合"><span class="nav-number">1.4.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有序集合"><span class="nav-number">1.5.</span> <span class="nav-text">有序集合</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhi</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
