@@ -94,13 +94,13 @@
   };
 </script>
 
-  <meta name="description" content="运行时数据区域      程序计数器记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。 Java 虚拟机栈每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个线程的 Java 虚拟机栈内存大小 本地方法栈本">
+  <meta name="description" content="运行时数据区域      程序计数器它可以看做是当前线程所执行的字节码的行号指示器，记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。 Java 虚拟机栈每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个">
 <meta name="keywords" content="JVM,java虚拟机,垃圾回收,Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java虚拟机">
 <meta property="og:url" content="http://yoursite.com/2019/08/12/Java虚拟机/index.html">
 <meta property="og:site_name" content="zzqcst">
-<meta property="og:description" content="运行时数据区域      程序计数器记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。 Java 虚拟机栈每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个线程的 Java 虚拟机栈内存大小 本地方法栈本">
+<meta property="og:description" content="运行时数据区域      程序计数器它可以看做是当前线程所执行的字节码的行号指示器，记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。 Java 虚拟机栈每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/images/pasted-97.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-68.png">
@@ -122,10 +122,10 @@
 <meta property="og:image" content="http://yoursite.com/images/pasted-90.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-92.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-93.png">
-<meta property="og:updated_time" content="2019-08-30T17:03:31.991Z">
+<meta property="og:updated_time" content="2019-08-31T06:33:44.368Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java虚拟机">
-<meta name="twitter:description" content="运行时数据区域      程序计数器记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。 Java 虚拟机栈每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个线程的 Java 虚拟机栈内存大小 本地方法栈本">
+<meta name="twitter:description" content="运行时数据区域      程序计数器它可以看做是当前线程所执行的字节码的行号指示器，记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。 Java 虚拟机栈每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个">
 <meta name="twitter:image" content="http://yoursite.com/images/pasted-97.png">
 
 
@@ -394,7 +394,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-31 01:03:31" itemprop="dateModified" datetime="2019-08-31T01:03:31+08:00">2019-08-31</time>
+                <time title="修改时间：2019-08-31 14:33:44" itemprop="dateModified" datetime="2019-08-31T14:33:44+08:00">2019-08-31</time>
               </span>
             
           
@@ -454,7 +454,7 @@
 </div>
 
 
-<h4 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h4><p>记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。</p>
+<h4 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h4><p>它可以看做是当前线程所执行的字节码的行号指示器，记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。</p>
 <h4 id="Java-虚拟机栈"><a href="#Java-虚拟机栈" class="headerlink" title="Java 虚拟机栈"></a>Java 虚拟机栈</h4><p>每个 Java 方法在执行的同时会创建一个栈帧用于存储局部变量表、操作数栈、常量池引用等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。可以通过 -Xss 这个虚拟机参数来指定每个线程的 Java 虚拟机栈内存大小<br><img src="/images/pasted-68.png" alt="upload successful"></p>
 <h4 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h4><p>本地方法栈与 Java 虚拟机栈类似，它们之间的区别只不过是本地方法栈为本地方法服务。</p>
 <h4 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h4><p>Java堆是Java虚拟机所管理的内存中最大的一块。Java堆是被所有线程共享的一块内存区域，此内存区域的唯一目的就是存放对象实例。</p>
@@ -640,7 +640,7 @@
 <li>符号引用：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能够无歧义的定位到目标即可。符号引用与虚拟机实现的内存布局无关，引用的目标不一定已经加载到内存中。各种虚拟机实现的内存布局可以各不相同，但是他们能接受的符号引用必须是一致的。</li>
 <li>直接引用：直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用是和虚拟机实现的内存布局相关的。如果有了直接引用，那引用的目标必定已经在内存中存在。</li>
 </ul>
-<h5 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h5><p>初始化阶段才真正开始执行类中定义的 Java 程序代码。初始化阶段是虚拟机执行类构造器 <clinit>() 方法的过程。在准备阶段，类变量已经赋过一次系统要求的初始值，而在初始化阶段，根据程序员通过程序制定的主观计划去初始化类变量和其它资源。</clinit></p>
+<h5 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h5><p>初始化阶段才真正开始执行类中定义的 Java 程序代码。初始化阶段是虚拟机执行类构造器 clinit&gt;() 方法的过程。在准备阶段，类变量已经赋过一次系统要求的初始值，而在初始化阶段，根据程序员通过程序制定的主观计划去初始化类变量和其它资源。</p>
 <p>&lt;clinit&gt;() 是由编译器自动收集类中所有类变量的赋值动作和静态语句块中的语句合并产生的，编译器收集的顺序由语句在源文件中出现的顺序决定。特别注意的是，静态语句块只能访问到定义在它之前的类变量，定义在它之后的类变量只能赋值，不能访问。例如以下代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        i = <span class="number">0</span>;                <span class="comment">// 给变量赋值可以正常编译通过</span></span><br><span class="line">        System.out.print(i);  <span class="comment">// 这句编译器会提示“非法向前引用”</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -806,7 +806,7 @@
 <h4 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h4><p>Configuration info for java,作用是实时的查看和调整虚拟机各项参数。</p>
 <h4 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h4><p>memory map for java，用于生成堆转储快照。</p>
 <h4 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h4><p>jvm heap analysis tool，与jmap搭配使用，分析jmap生成的堆转储快照。</p>
-<h4 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h4><p>stack trace for java，用于生成虚拟机当前时刻的线程快照。线程快照就是当前虚拟机内每一条线程正在执行方法堆栈集合，生成县城关快照的主要目的是定位线程出现长时间停顿的原因，如线程间死锁、死循环、请求外部资源等原因。</p>
+<h4 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h4><p>stack trace for java，用于生成虚拟机当前时刻的线程快照。线程快照就是当前虚拟机内每一条线程正在执行方法堆栈集合，生成线程快照的主要目的是定位线程出现长时间停顿的原因，如线程间死锁、死循环、请求外部资源等原因。</p>
 <h3 id="jdk的可视化工具"><a href="#jdk的可视化工具" class="headerlink" title="jdk的可视化工具"></a>jdk的可视化工具</h3><h4 id="jconsole"><a href="#jconsole" class="headerlink" title="jconsole"></a>jconsole</h4><p>java monitoring and management console，java监视与管理控制台。</p>
 <h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="String的intern方法"><a href="#String的intern方法" class="headerlink" title="String的intern方法"></a>String的intern方法</h4><p>如果字符串常量池中已经包含了与String对象的字符串相同的字符串，则返回常量池中字符串的引用；否则，将字符串对象添加到常量池中，并返回字符串对象的引用。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    String s = <span class="keyword">new</span> String(<span class="string">"1"</span>);</span><br><span class="line">    s.intern();</span><br><span class="line">    String s2 = <span class="string">"1"</span>;</span><br><span class="line">    System.out.println(s == s2);</span><br><span class="line"> </span><br><span class="line">    String s3 = <span class="keyword">new</span> String(<span class="string">"1"</span>) + <span class="keyword">new</span> String(<span class="string">"1"</span>);</span><br><span class="line">    s3.intern();</span><br><span class="line">    String s4 = <span class="string">"11"</span>;</span><br><span class="line">    System.out.println(s3 == s4);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
