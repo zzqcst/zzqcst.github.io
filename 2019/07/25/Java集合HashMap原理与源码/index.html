@@ -95,7 +95,7 @@
 </script>
 
   <meta name="description" content="本文使用 Java1.8版本  类的层次关系Map框架    12public class HashMap&amp;lt;K,V&amp;gt; extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable  原理       HashMap是基于拉链法实现的散列表，内部由数组和链表实现。  数组的初始容">
-<meta name="keywords" content="Java,HashMap,Map">
+<meta name="keywords" content="Java,Map,HashMap">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java集合HashMap原理与源码分析">
 <meta property="og:url" content="http://yoursite.com/2019/07/25/Java集合HashMap原理与源码/index.html">
@@ -111,7 +111,7 @@
 <meta property="og:image" content="http://yoursite.com/images/pasted-11.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-12.png">
 <meta property="og:image" content="http://yoursite.com/images/pasted-13.png">
-<meta property="og:updated_time" content="2019-07-25T18:56:48.267Z">
+<meta property="og:updated_time" content="2019-09-02T00:50:36.608Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java集合HashMap原理与源码分析">
 <meta name="twitter:description" content="本文使用 Java1.8版本  类的层次关系Map框架    12public class HashMap&amp;lt;K,V&amp;gt; extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable  原理       HashMap是基于拉链法实现的散列表，内部由数组和链表实现。  数组的初始容">
@@ -383,7 +383,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-26 02:56:48" itemprop="dateModified" datetime="2019-07-26T02:56:48+08:00">2019-07-26</time>
+                <time title="修改时间：2019-09-02 08:50:36" itemprop="dateModified" datetime="2019-09-02T08:50:36+08:00">2019-09-02</time>
               </span>
             
           
@@ -455,10 +455,19 @@
 
 <p>HashMap是基于拉链法实现的散列表，内部由数组和链表实现。</p>
 <ol>
-<li>数组的初始容量为<code>16</code>，而容量是以<code>2</code>的次方扩充的，一是为了提高性能使用足够大的数组，二是为了能使用位运算代替取模预算。</li>
-<li>数组是否需要扩充是通过负载因子判断的，如果当前元素个数为数组容量的<code>0.75</code>时，就会扩充数组。这个0.75就是默认的负载因子，可由构造传入。我们也可以设置大于1的负载因子，这样数组就不会扩充，牺牲性能，节省内存。</li>
-<li>为了解决碰撞，数组中的元素是单向链表类型。当链表长度到达一个阈值时（<code>8</code>），会将链表转换成红黑树提高性能。而当链表长度缩小到另一个阈值时（<code>6</code>），又会将红黑树转换回单向链表提高性能，这里是一个平衡点。</li>
-<li>对于第三点补充说明，检查链表长度转换成红黑树之前，还会先检测当前数组数组是否到达一个阈值（<code>64</code>），如果没有到达这个容量，会放弃转换，先去扩充数组。</li>
+<li><p>数组的初始容量为<code>16</code>，而容量是以<code>2</code>的次方扩充的，一是为了提高性能使用足够大的数组，二是为了能使用位运算代替取模预算。</p>
+</li>
+<li><p>数组是否需要扩充是通过负载因子判断的，如果当前元素个数为数组容量的<code>0.75</code>时，就会扩充数组。这个0.75就是默认的负载因子，可由构造传入。</p>
+</li>
+<li><p>为了解决碰撞，数组中的元素是单向链表类型。当链表长度到达一个阈值时（<code>8</code>），会将链表转换成红黑树提高性能。而当链表长度缩小到另一个阈值时（<code>6</code>），又会将红黑树转换回单向链表提高性能，这里是一个平衡点。</p>
+</li>
+<li><p>对于第三点补充说明，检查链表长度转换成红黑树之前，还会先检测当前数组数组是否到达一个阈值（<code>64</code>），如果没有到达这个容量，会放弃转换，先去扩充数组。</p>
+</li>
+<li><p>负载因子设置为0.75f的原因，在HashMap注释中有这么一段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">* Ideally, under random hashCodes, the frequency of</span><br><span class="line">* nodes in bins follows a Poisson distribution</span><br><span class="line">* (http://en.wikipedia.org/wiki/Poisson_distribution) with a</span><br><span class="line">* parameter of about 0.5 on average for the default resizing</span><br><span class="line">* threshold of 0.75, although with a large variance because of</span><br><span class="line">* resizing granularity. Ignoring variance, the expected</span><br><span class="line">* occurrences of list size k are (exp(-0.5) * pow(0.5, k) /</span><br><span class="line">* factorial(k)). The first values are:</span><br><span class="line">* 0:    0.60653066</span><br><span class="line">* 1:    0.30326533</span><br><span class="line">* 2:    0.07581633</span><br><span class="line">* 3:    0.01263606</span><br><span class="line">* 4:    0.00157952</span><br><span class="line">* 5:    0.00015795</span><br><span class="line">* 6:    0.00001316</span><br><span class="line">* 7:    0.00000094</span><br><span class="line">* 8:    0.00000006</span><br><span class="line">* more: less than 1 in ten million</span><br></pre></td></tr></table></figure>
+
+<p>在理想情况下，使用随机哈希吗，节点出现的频率在hash桶中遵循泊松分布，同时给出了桶中元素的个数和概率的对照表。<br>从上表可以看出当桶中元素到达8个的时候，概率已经变得非常小，也就是说用0.75作为负载因子，每个碰撞位置的链表长度超过8个是几乎不可能的。</p>
+</li>
 </ol>
 <h4 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * table数组的默认初始长度，java规定hashMap的数组长度必须是2的次方</span></span><br><span class="line"><span class="comment">  * 扩展长度时也是当前长度 &lt;&lt; 1。</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">4</span>; <span class="comment">// aka 16</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组的最大长度</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAXIMUM_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">30</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 默认负载因子，当元素个数超过这个比例则会执行数组扩充操作。</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">float</span> DEFAULT_LOAD_FACTOR = <span class="number">0.75f</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 树形化阈值，当链表节点个大于等于TREEIFY_THRESHOLD - 1时，</span></span><br><span class="line"><span class="comment">// 会进入treefyBin方法判断是否需要转换为红黑树。</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TREEIFY_THRESHOLD = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解除树形化阈值，当链表节点小于等于这个值时，会将红黑树转换成普通的链表。</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> UNTREEIFY_THRESHOLD = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换成树的table数组的阈值，即：当内部数组长度小于64时，不会将链表转化成红黑树，而是优先扩充数组。</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MIN_TREEIFY_CAPACITY = <span class="number">64</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个就是hashMap的内部数组了，而Node则是链表节点对象，实现了Map的Entry接口，存储键值对</span></span><br><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 下面三个容器类成员，作用相同，实际类型为HashMap的内部类KeySet、Values、EntrySet。</span></span><br><span class="line"><span class="comment">// 他们的作用并不是缓存所有的key或者所有的value，内部并没有持有任何元素。</span></span><br><span class="line"><span class="comment">// 而是通过他们内部定义的方法，从三个角度（视图）操作HashMap，更加方便的迭代。</span></span><br><span class="line"><span class="comment">// 关注点分别是键，值，映射。</span></span><br><span class="line"><span class="keyword">transient</span> Set&lt;K&gt;        keySet;  <span class="comment">// AbstractMap的成员</span></span><br><span class="line"><span class="keyword">transient</span> Collection&lt;V&gt; values; <span class="comment">// AbstractMap的成员</span></span><br><span class="line"><span class="keyword">transient</span> Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元素个数，注意和内部数组长度区分开来。</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> size;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 是容器结构的修改次数，fail-fast机制。</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> modCount;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 阈值，元素个数超过这个值时扩充数组。 threshold = capacity * load factor，具体看上面的静态常量。</span></span><br><span class="line"><span class="comment">//这个是table数组长度乘以负载因子得到，例如table数组长度16，负载因子0.75,则threshold值为12，</span></span><br><span class="line"><span class="comment">//当元素超过12个时，扩充数组</span></span><br><span class="line"><span class="keyword">int</span> threshold;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 装载因子，默认0.75，可以指定。</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">float</span> loadFactor;</span><br></pre></td></tr></table></figure>
 
@@ -605,9 +614,9 @@
           
             <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
           
-            <a href="/tags/HashMap/" rel="tag"><i class="fa fa-tag"></i> HashMap</a>
-          
             <a href="/tags/Map/" rel="tag"><i class="fa fa-tag"></i> Map</a>
+          
+            <a href="/tags/HashMap/" rel="tag"><i class="fa fa-tag"></i> HashMap</a>
           
         </div>
       

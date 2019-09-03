@@ -102,7 +102,7 @@
 <meta property="og:description" content="概述操作系统基本特性并发性并行是指两个或多个事件在同一时刻发生，并发是指两个或多个事件在同一时间间隔内发生。为使多个程序能够并发执行，系统必须为每个程序建立进程。简单来说，进程是指在系统中能够独立运行并作为资源分配的基本单位，它是由一组指令、数据以及堆栈等组成，是一个能够独立运行的活动实体。 进程调度的开下较大，仅此引入线程，一个进程可以拥有多个线程。在引入线程的操作系统中，通常将进程作为资源分配">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/images/pasted-94.png">
-<meta property="og:updated_time" content="2019-08-19T13:44:04.759Z">
+<meta property="og:updated_time" content="2019-09-03T04:54:27.563Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="操作系统">
 <meta name="twitter:description" content="概述操作系统基本特性并发性并行是指两个或多个事件在同一时刻发生，并发是指两个或多个事件在同一时间间隔内发生。为使多个程序能够并发执行，系统必须为每个程序建立进程。简单来说，进程是指在系统中能够独立运行并作为资源分配的基本单位，它是由一组指令、数据以及堆栈等组成，是一个能够独立运行的活动实体。 进程调度的开下较大，仅此引入线程，一个进程可以拥有多个线程。在引入线程的操作系统中，通常将进程作为资源分配">
@@ -359,13 +359,23 @@
                 
               
 
-              <time title="创建时间：2019-08-19 13:53:52 / 修改时间：21:44:04" itemprop="dateCreated datePublished" datetime="2019-08-19T13:53:52+08:00">2019-08-19</time>
+              <time title="创建时间：2019-08-19 13:53:52" itemprop="dateCreated datePublished" datetime="2019-08-19T13:53:52+08:00">2019-08-19</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-03 12:54:27" itemprop="dateModified" datetime="2019-09-03T12:54:27+08:00">2019-09-03</time>
+              </span>
             
           
 
@@ -444,7 +454,8 @@
 <li>用户接口：提供给用户使用的接口，用户可通过该接口取得操作系统的服务。</li>
 <li>程序接口：提供给程序员在编程使用的接口，是用户程序取得操作系统服务的唯一途径。</li>
 </ul>
-<h3 id="进程管理-1"><a href="#进程管理-1" class="headerlink" title="进程管理"></a>进程管理</h3><h4 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h4><h5 id="信号量机制"><a href="#信号量机制" class="headerlink" title="信号量机制"></a>信号量机制</h5><p>信号量S代表系统中某类资源的数目，P原语操作使S值减一，V原语操作使S值加一。当进程要进入临界区时，执行P原语操作，执行后若S值大于等于0，则该进程进入临界区；若执行后S值小于零，则该进程被阻塞，进入与该信号对应的队列中。当进程离开临界区时，执行V原语操作，执行后若S值小于等于零，则从该信号量的等待队列中唤醒一等待进程；若执行性后S值大于零，则程序继续执行。<br><img src="/images/pasted-94.png" alt="upload successful"></p>
+<h3 id="进程管理-1"><a href="#进程管理-1" class="headerlink" title="进程管理"></a>进程管理</h3><h4 id="进程描述"><a href="#进程描述" class="headerlink" title="进程描述"></a>进程描述</h4><h5 id="CPU现场信息"><a href="#CPU现场信息" class="headerlink" title="CPU现场信息"></a>CPU现场信息</h5><p>被中断的CPU现场信息包括所有的CPU寄存器(如通用寄存器、段表控制寄存器等)，指令计数器（PC）和处理机状态字(PSW)的信息。</p>
+<h4 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h4><h5 id="信号量机制"><a href="#信号量机制" class="headerlink" title="信号量机制"></a>信号量机制</h5><p>信号量S代表系统中某类资源的数目，P原语操作使S值减一，V原语操作使S值加一。当进程要进入临界区时，执行P原语操作，执行后若S值大于等于0，则该进程进入临界区；若执行后S值小于零，则该进程被阻塞，进入与该信号对应的队列中。当进程离开临界区时，执行V原语操作，执行后若S值小于等于零，则从该信号量的等待队列中唤醒一等待进程；若执行性后S值大于零，则程序继续执行。<br><img src="/images/pasted-94.png" alt="upload successful"></p>
 <h5 id="管程-monitor-机制"><a href="#管程-monitor-机制" class="headerlink" title="管程(monitor)机制"></a>管程(monitor)机制</h5><p>虽然信号量机制是一种方便有效的进程同步机制，但是每个访问临界区的进程都必须自备wait(S)和signal(S)。这就使得大量的同步操作分散在各个进程中。</p>
 <p>代表共享资源的数据结构，以及对该共享数据结构实施操作的一组过程所组成的资源管理程序，称之为管程。即，使用管程，每个进程不再需要自备操作共享变量的方法，只需要调用管程即可实现对共享变量的操作。管程相当于围墙，它把共享变量和对它进行的若干操作围了起来。</p>
 <h6 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h6><p>在利用管程实现进程同步时，必须设置同步工具，如两个同步原语wait和signal。当某进程通过管程请求获得临界资源而未能满足时，管程调用wait原语使该进程等待，并将其排在等待队列上，当另一进程访问完成并释放该资源之后，管程又调用signal原语，唤醒等待队列中的一个进程。</p>
@@ -682,7 +693,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作系统基本特性"><span class="nav-number">1.1.</span> <span class="nav-text">操作系统基本特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#并发性"><span class="nav-number">1.1.1.</span> <span class="nav-text">并发性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#共享性"><span class="nav-number">1.1.2.</span> <span class="nav-text">共享性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#虚拟技术"><span class="nav-number">1.1.3.</span> <span class="nav-text">虚拟技术</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#异步性"><span class="nav-number">1.1.4.</span> <span class="nav-text">异步性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#操作系统的主要功能"><span class="nav-number">1.2.</span> <span class="nav-text">操作系统的主要功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程管理"><span class="nav-number">1.2.1.</span> <span class="nav-text">进程管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内存管理"><span class="nav-number">1.2.2.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#设备管理"><span class="nav-number">1.2.3.</span> <span class="nav-text">设备管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#文件管理"><span class="nav-number">1.2.4.</span> <span class="nav-text">文件管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#操作系统与用户之间的接口"><span class="nav-number">1.2.5.</span> <span class="nav-text">操作系统与用户之间的接口</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程管理-1"><span class="nav-number">2.</span> <span class="nav-text">进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程同步"><span class="nav-number">2.1.</span> <span class="nav-text">进程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#信号量机制"><span class="nav-number">2.1.1.</span> <span class="nav-text">信号量机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#管程-monitor-机制"><span class="nav-number">2.1.2.</span> <span class="nav-text">管程(monitor)机制</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#条件变量"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">条件变量</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作系统基本特性"><span class="nav-number">1.1.</span> <span class="nav-text">操作系统基本特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#并发性"><span class="nav-number">1.1.1.</span> <span class="nav-text">并发性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#共享性"><span class="nav-number">1.1.2.</span> <span class="nav-text">共享性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#虚拟技术"><span class="nav-number">1.1.3.</span> <span class="nav-text">虚拟技术</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#异步性"><span class="nav-number">1.1.4.</span> <span class="nav-text">异步性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#操作系统的主要功能"><span class="nav-number">1.2.</span> <span class="nav-text">操作系统的主要功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程管理"><span class="nav-number">1.2.1.</span> <span class="nav-text">进程管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内存管理"><span class="nav-number">1.2.2.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#设备管理"><span class="nav-number">1.2.3.</span> <span class="nav-text">设备管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#文件管理"><span class="nav-number">1.2.4.</span> <span class="nav-text">文件管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#操作系统与用户之间的接口"><span class="nav-number">1.2.5.</span> <span class="nav-text">操作系统与用户之间的接口</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程管理-1"><span class="nav-number">2.</span> <span class="nav-text">进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程描述"><span class="nav-number">2.1.</span> <span class="nav-text">进程描述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CPU现场信息"><span class="nav-number">2.1.1.</span> <span class="nav-text">CPU现场信息</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程同步"><span class="nav-number">2.2.</span> <span class="nav-text">进程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#信号量机制"><span class="nav-number">2.2.1.</span> <span class="nav-text">信号量机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#管程-monitor-机制"><span class="nav-number">2.2.2.</span> <span class="nav-text">管程(monitor)机制</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#条件变量"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">条件变量</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
